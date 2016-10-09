@@ -16,7 +16,7 @@ define(function (require) {
     };
     /**
      * 单次触发绑定，dispatch后销毁
-     * 
+     *
      * @param {string} event 事件名
      * @param {Function} handler 响应函数
      * @param {Object} context
@@ -33,8 +33,8 @@ define(function (require) {
         }
 
         _h[event].push({
-            h : handler,
-            one : true,
+            h: handler,
+            one: true,
             ctx: context || this
         });
 
@@ -59,8 +59,8 @@ define(function (require) {
         }
 
         _h[event].push({
-            h : handler,
-            one : false,
+            h: handler,
+            one: false,
             ctx: context || this
         });
 
@@ -104,18 +104,16 @@ define(function (require) {
 
     /**
      * 事件分发
-     * 
+     *
      * @param {string} type 事件类型
      */
     Eventful.prototype.dispatch = function (type) {
         if (this._handlers[type]) {
             var args = arguments;
             var argLen = args.length;
-
             if (argLen > 3) {
                 args = Array.prototype.slice.call(args, 1);
             }
-            
             var _h = this._handlers[type];
             var len = _h.length;
             for (var i = 0; i < len;) {
@@ -135,7 +133,7 @@ define(function (require) {
                         _h[i]['h'].apply(_h[i]['ctx'], args);
                         break;
                 }
-                
+
                 if (_h[i]['one']) {
                     _h.splice(i, 1);
                     len--;
@@ -182,7 +180,7 @@ define(function (require) {
                         _h[i]['h'].apply(ctx, args);
                         break;
                 }
-                
+
                 if (_h[i]['one']) {
                     _h.splice(i, 1);
                     len--;
@@ -262,6 +260,6 @@ define(function (require) {
      * @type {Function}
      * @default null
      */
-    
+
     return Eventful;
 });

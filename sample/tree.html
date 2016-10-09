@@ -164,6 +164,12 @@
                 myChart.setOption(option);
 
                 myChart.setSeries(series, {notMerger: true});
+
+                myChart.on('click',function (evnt,chart) {
+                    var realTarget=evnt.event.realTarget
+                    var data=evnt.data;
+
+                })
             }
         );
     }

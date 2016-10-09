@@ -55,7 +55,7 @@ define(
                 event = event || window.event;
                 this._lastHover = null;
                 this._isMouseDown = 0;
-                
+
                 // 分发config.EVENT.RESIZE事件，global
                 this.dispatch(EVENT.RESIZE, event);
             },
@@ -82,11 +82,13 @@ define(
                     if (this._clickThreshold < 5) {
                         this._dispatchAgency(_lastHover, EVENT.CLICK, event);
                     }
+                } else if (this._clickThreshold < 5) {
+                    this._dispatchAgency(null, EVENT.CLICK, event);
                 }
 
                 this._mousemoveHandler(event);
             },
-            
+
             /**
              * 双击响应函数
              * @inner
@@ -114,7 +116,7 @@ define(
 
                 this._mousemoveHandler(event);
             },
-            
+
 
             /**
              * 鼠标滚轮响应函数
@@ -158,7 +160,7 @@ define(
                         layer.dirty = true;
                         needsRefresh = true;
 
-                        // Prevent browser default scroll action 
+                        // Prevent browser default scroll action
                         eventTool.stop(event);
                     }
                 });
@@ -304,7 +306,7 @@ define(
                 if (!this.painter.isLoading()) {
                     this.painter.refreshHover();
                 }
-                
+
                 this.dispatch(EVENT.GLOBALOUT, event);
             },
 
@@ -408,7 +410,7 @@ define(
                 // eventTool.stop(event);// 阻止浏览器默认事件，重要
                 event = this._zrenderEventFixed(event, true);
                 this._mouseupHandler(event);
-                
+
                 var now = new Date();
                 if (now - this._lastTouchMoment < EVENT.touchClickDelay) {
                     this._mobileFindFixed(event);
@@ -427,7 +429,7 @@ define(
 
         /**
          * bind一个参数的function
-         * 
+         *
          * @inner
          * @param {Function} handler 要bind的function
          * @param {Object} context 运行时this环境
@@ -451,7 +453,7 @@ define(
         }
         /**
          * 为控制类实例初始化dom 事件处理函数
-         * 
+         *
          * @inner
          * @param {module:zrender/Handler} instance 控制类实例
          */
@@ -490,9 +492,9 @@ define(
             // this._lastTouchMoment;
             // this._lastDownButton;
 
-            this._lastX = 
-            this._lastY = 
-            this._mouseX = 
+            this._lastX =
+            this._lastY =
+            this._mouseX =
             this._mouseY = 0;
 
             this._findHover = bind3Arg(findHover, this);
@@ -502,7 +504,7 @@ define(
             // 初始化，事件绑定，支持的所有事件都由如下原生事件计算得来
             if (window.addEventListener) {
                 window.addEventListener('resize', this._resizeHandler);
-                
+
                 if (env.os.tablet || env.os.phone) {
                     // mobile支持
                     root.addEventListener('touchstart', this._touchstartHandler);
@@ -517,7 +519,7 @@ define(
                     root.addEventListener('mousemove', this._mousemoveHandler);
                     root.addEventListener('mousedown', this._mousedownHandler);
                     root.addEventListener('mouseup', this._mouseupHandler);
-                } 
+                }
                 root.addEventListener('DOMMouseScroll', this._mousewheelHandler);
                 root.addEventListener('mouseout', this._mouseoutHandler);
             }
@@ -619,13 +621,13 @@ define(
             this._domHover =
             this.storage =
             this.painter = null;
-            
+
             this.un();
         };
 
         /**
          * 拖拽开始
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -639,7 +641,7 @@ define(
                 && this._mouseDownTarget == _lastHover
             ) {
                 // 拖拽点击生效时长阀门，某些场景需要降低拖拽敏感度
-                if (_lastHover.dragEnableTime && 
+                if (_lastHover.dragEnableTime &&
                     new Date() - this._lastMouseDownMoment < _lastHover.dragEnableTime
                 ) {
                     return;
@@ -664,7 +666,7 @@ define(
 
         /**
          * 拖拽进入目标元素
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -682,7 +684,7 @@ define(
 
         /**
          * 拖拽在目标元素上移动
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -700,7 +702,7 @@ define(
 
         /**
          * 拖拽离开目标元素
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -718,7 +720,7 @@ define(
 
         /**
          * 拖拽在目标元素上完成
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -740,7 +742,7 @@ define(
 
         /**
          * 拖拽结束
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -762,7 +764,7 @@ define(
 
         /**
          * 鼠标在某个图形元素上移动
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -773,7 +775,7 @@ define(
 
         /**
          * 鼠标离开某个图形元素
-         * 
+         *
          * @private
          * @param {Object} event 事件对象
          */
@@ -784,7 +786,7 @@ define(
 
         /**
          * 事件分发代理
-         * 
+         *
          * @private
          * @param {Object} targetShape 目标图形元素
          * @param {string} eventName 事件名称
@@ -800,19 +802,44 @@ define(
                 cancelBubble: false
             };
 
+            if(!targetShape){
+                //
+                var list = this.storage.getShapeList();
+                for(var _i=0;_i<list.length;_i++){
+                    util.each(list,function(n,i){
+                        if(n.isCoverTextRect(this._mouseX, this._mouseY)){
+                            event.realTarget='label';
+                            var eventPacket = {
+                                type : eventName,
+                                event : event,
+                                target : n,
+                                cancelBubble: false
+                            };
+                            n[eventHandler] && el[eventHandler](eventPacket);
+                            n.dispatch(eventName, eventPacket);
+                            this.dispatch(eventName, eventPacket);
+                        }
+                    },this)
+                }
+
+            }
+
             var el = targetShape;
+            if(eventName!='click'){
+                return
+            }
 
             if (draggedShape) {
                 eventPacket.dragged = draggedShape;
             }
 
             while (el) {
-                el[eventHandler] 
+                el[eventHandler]
                 && (eventPacket.cancelBubble = el[eventHandler](eventPacket));
                 el.dispatch(eventName, eventPacket);
 
                 el = el.parent;
-                
+
                 if (eventPacket.cancelBubble) {
                     break;
                 }
@@ -875,7 +902,7 @@ define(
                 }
             };
         })();
-        
+
         // touch指尖错觉的尝试偏移量配置
         var MOBILE_TOUCH_OFFSETS = [
             { x: 10 },
@@ -909,7 +936,7 @@ define(
 
         /**
          * 迭代函数，查找hover到的图形元素并即时做些事件分发
-         * 
+         *
          * @inner
          * @param {Object} shape 图形元素
          * @param {number} x
@@ -965,7 +992,7 @@ define(
 
         /**
          * 如果存在第三方嵌入的一些dom触发的事件，或touch事件，需要转换一下事件坐标
-         * 
+         *
          * @private
          */
         Handler.prototype._zrenderEventFixed = function (event, isTouch) {

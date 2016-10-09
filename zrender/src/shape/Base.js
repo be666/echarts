@@ -29,14 +29,14 @@
 
 /**
  * @typedef {Object} module:zrender/shape/Base~IBoundingRect
- * @property {number} x 左上角顶点x轴坐标 
+ * @property {number} x 左上角顶点x轴坐标
  * @property {number} y 左上角顶点y轴坐标
  * @property {number} width 包围盒矩形宽度
  * @property {number} height 包围盒矩形高度
  */
 
 define(
-    function(require) {
+    function (require) {
         var vmlCanvasManager = window['G_vmlCanvasManager'];
 
         var matrix = require('../tool/matrix');
@@ -56,10 +56,10 @@ define(
             var rect = _getTextRect(
                 text, x, y, textFont, textAlign, textBaseline
             );
-            
+
             text = (text + '').split('\n');
             var lineHeight = require('../tool/area').getTextHeight('国', textFont);
-            
+
             switch (textBaseline) {
                 case 'top':
                     y = rect.y;
@@ -70,7 +70,7 @@ define(
                 default:
                     y = rect.y + lineHeight / 2;
             }
-            
+
             for (var i = 0, l = text.length; i < l; i++) {
                 ctx.fillText(text[i], x, y);
                 y += lineHeight;
@@ -91,9 +91,9 @@ define(
             var area = require('../tool/area');
             var width = area.getTextWidth(text, textFont);
             var lineHeight = area.getTextHeight('国', textFont);
-            
+
             text = (text + '').split('\n');
-            
+
             switch (textAlign) {
                 case 'end':
                 case 'right':
@@ -115,10 +115,10 @@ define(
             }
 
             return {
-                x : x,
-                y : y,
-                width : width,
-                height : lineHeight * text.length
+                x: x,
+                y: y,
+                width: width,
+                height: lineHeight * text.length
             };
         }
 
@@ -129,10 +129,10 @@ define(
          * @extends module:zrender/mixin/Eventful
          * @param {Object} options 关于shape的配置项，可以是shape的自有属性，也可以是自定义的属性。
          */
-        var Base = function(options) {
-            
+        var Base = function (options) {
+
             options = options || {};
-            
+
             /**
              * Shape id, 全局唯一
              * @type {string}
@@ -217,11 +217,11 @@ define(
          * @default true
          */
         Base.prototype.hoverable = true;
-        
+
         /**
          * z值，跟zlevel一样影响shape绘制的前后顺序，z值大的shape会覆盖在z值小的上面，
          * 但是并不会创建新的canvas，所以优先级低于zlevel，而且频繁改动的开销比zlevel小很多。
-         * 
+         *
          * @name module:zrender/shape/Base#z
          * @type {number}
          * @default 0
@@ -230,11 +230,11 @@ define(
 
         /**
          * 绘制图形
-         * 
+         *
          * @param {CanvasRenderingContext2D} ctx
          * @param {boolean} [isHighlight=false] 是否使用高亮属性
          * @param {Function} [updateCallback]
-         *        需要异步加载资源的shape可以通过这个callback(e), 
+         *        需要异步加载资源的shape可以通过这个callback(e),
          *        让painter更新视图，base.brush没用，需要的话重载brush
          */
         Base.prototype.brush = function (ctx, isHighlight) {
@@ -255,7 +255,7 @@ define(
                 default:
                     ctx.fill();
             }
-            
+
             this.drawText(ctx, style, this.style);
 
             this.afterBrush(ctx);
@@ -269,7 +269,7 @@ define(
          */
         Base.prototype.beforeBrush = function (ctx, isHighlight) {
             var style = this.style;
-            
+
             if (this.brushTypeOnly) {
                 style.brushType = this.brushTypeOnly;
             }
@@ -308,17 +308,17 @@ define(
         };
 
         var STYLE_CTX_MAP = [
-            [ 'color', 'fillStyle' ],
-            [ 'strokeColor', 'strokeStyle' ],
-            [ 'opacity', 'globalAlpha' ],
-            [ 'lineCap', 'lineCap' ],
-            [ 'lineJoin', 'lineJoin' ],
-            [ 'miterLimit', 'miterLimit' ],
-            [ 'lineWidth', 'lineWidth' ],
-            [ 'shadowBlur', 'shadowBlur' ],
-            [ 'shadowColor', 'shadowColor' ],
-            [ 'shadowOffsetX', 'shadowOffsetX' ],
-            [ 'shadowOffsetY', 'shadowOffsetY' ]
+            ['color', 'fillStyle'],
+            ['strokeColor', 'strokeStyle'],
+            ['opacity', 'globalAlpha'],
+            ['lineCap', 'lineCap'],
+            ['lineJoin', 'lineJoin'],
+            ['miterLimit', 'miterLimit'],
+            ['lineWidth', 'lineWidth'],
+            ['shadowBlur', 'shadowBlur'],
+            ['shadowColor', 'shadowColor'],
+            ['shadowOffsetX', 'shadowOffsetX'],
+            ['shadowOffsetY', 'shadowOffsetY']
         ];
 
         /**
@@ -367,10 +367,10 @@ define(
                 }
             }
         };
-    
+
         /**
          * 根据默认样式扩展高亮样式
-         * 
+         *
          * @param {module:zrender/shape/Base~IBaseShapeStyle} style 默认样式
          * @param {module:zrender/shape/Base~IBaseShapeStyle} highlightStyle 高亮样式
          * @param {string} brushTypeOnly
@@ -388,7 +388,7 @@ define(
                 // 带填充则用高亮色加粗边线
                 newStyle.strokeColor = highlightColor;
                 newStyle.lineWidth = (style.lineWidth || 1)
-                                      + this.getHighlightZoom();
+                    + this.getHighlightZoom();
                 newStyle.brushType = 'both';
             }
             else {
@@ -396,15 +396,15 @@ define(
                     // 描边型的则用原色加工高亮
                     newStyle.strokeColor = highlightColor;
                     newStyle.lineWidth = (style.lineWidth || 1)
-                                          + this.getHighlightZoom();
-                } 
+                        + this.getHighlightZoom();
+                }
                 else {
                     // 线型的则用原色加工高亮
                     newStyle.strokeColor = highlightStyle.strokeColor
-                                           || color.mix(
-                                                 style.strokeColor,
-                                                 color.toRGB(highlightColor)
-                                              );
+                        || color.mix(
+                            style.strokeColor,
+                            color.toRGB(highlightColor)
+                        );
                 }
             }
 
@@ -449,9 +449,9 @@ define(
          * @return {module:zrender/shape/Base~IBoundingRect}
          */
         Base.prototype.getRect = function (style) {
-            log('getRect not implemented in ' + this.type);   
+            log('getRect not implemented in ' + this.type);
         };
-        
+
         /**
          * 判断鼠标位置是否在图形内
          * @param {number} x
@@ -468,7 +468,7 @@ define(
                 // 矩形内
                 return require('../tool/area').isInside(this, this.style, x, y);
             }
-            
+
             return false;
         };
 
@@ -483,6 +483,15 @@ define(
                 && y >= rect.y
                 && y <= (rect.y + rect.height);
         };
+
+
+        Base.prototype.isCoverTextRect = function (x, y) {
+            return x >= this.style.text_x
+                && x <= (this.style.text_x + this.style.text_w)
+                && y >= this.style.text_y
+                && y <= (this.style.text_y + this.style.text_h);
+        };
+
 
         /**
          * 绘制附加文本
@@ -506,18 +515,18 @@ define(
             var ty;         // 文本纵坐标
 
             var textPosition = style.textPosition       // 用户定义
-                               || this.textPosition     // shape默认
-                               || 'top';                // 全局默认
+                || this.textPosition     // shape默认
+                || 'top';                // 全局默认
 
             switch (textPosition) {
-                case 'inside': 
-                case 'top': 
-                case 'bottom': 
-                case 'left': 
-                case 'right': 
+                case 'inside':
+                case 'top':
+                case 'bottom':
+                case 'left':
+                case 'right':
                     if (this.getRect) {
                         var rect = (normalStyle || style).__rect
-                                   || this.getRect(normalStyle || style);
+                            || this.getRect(normalStyle || style);
 
                         switch (textPosition) {
                             case 'inside':
@@ -561,10 +570,10 @@ define(
                 case 'start':
                 case 'end':
                     var pointList = style.pointList
-                                    || [
-                                        [style.xStart || 0, style.yStart || 0],
-                                        [style.xEnd || 0, style.yEnd || 0]
-                                    ];
+                        || [
+                            [style.xStart || 0, style.yStart || 0],
+                            [style.xEnd || 0, style.yEnd || 0]
+                        ];
                     var length = pointList.length;
                     if (length < 2) {
                         // 少于2个点就不画了~
@@ -590,7 +599,7 @@ define(
                     }
                     tx = xEnd;
                     ty = yEnd;
-                    
+
                     var angle = Math.atan((yStart - yEnd) / (xEnd - xStart)) / Math.PI * 180;
                     if ((xEnd - xStart) < 0) {
                         angle += 180;
@@ -598,7 +607,7 @@ define(
                     else if ((yStart - yEnd) < 0) {
                         angle += 360;
                     }
-                    
+
                     dd = 5;
                     if (angle >= 30 && angle <= 150) {
                         al = 'center';
@@ -628,12 +637,20 @@ define(
                     bl = 'middle';
                     break;
             }
-
+            var textRect = _getTextRect(
+                style.text, tx, ty, style.textFont,
+                style.textAlign || al,
+                style.textBaseline || bl
+            );
+            style.text_x = tx;
+            style.text_y = ty - textRect.height / 2;
+            style.text_w = textRect.width;
+            style.text_h = textRect.height;
             if (tx != null && ty != null) {
                 _fillText(
                     ctx,
-                    style.text, 
-                    tx, ty, 
+                    style.text,
+                    tx, ty,
                     style.textFont,
                     style.textAlign || al,
                     style.textBaseline || bl
@@ -641,7 +658,7 @@ define(
             }
         };
 
-        Base.prototype.modSelf = function() {
+        Base.prototype.modSelf = function () {
             this.__dirty = true;
             if (this.style) {
                 this.style.__rect = null;

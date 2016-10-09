@@ -1,18 +1,17 @@
 {
-  "name": "echarts",
-  "description": "Enterprise Charts，基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据可视化表。",
-  "version": "2.2.7",
-  "scripts": {
-    "dev": "browser-sync start --config bs-config.js",
-    "build": "echarts-optimize"
-  },
-  "maintainers": [],
-  "dependencies": {},
-  "repository": "git://github.com/ecomfe/echarts",
-  "main": "echarts",
-  "homepage": "http://echarts.baidu.com",
-  "devDependencies": {
-    "browser-sync": "^2.17.1",
-    "echarts-optimizer": "^0.2.18"
-  }
+    "name": "echarts",
+    "description": "Enterprise Charts，基于Canvas，纯Javascript图表库，提供直观，生动，可交互，可个性化定制的数据可视化表。",
+    "version": "2.2.7",
+    "scripts": {
+        "build": "cd build ;echarts-optimize -c ./echarts-optimize-conf.js -o ./"
+    },
+    "maintainers": [],
+    "dependencies": {},
+    "repository": "git://github.com/ecomfe/echarts",
+    "main": "echarts",
+    "homepage": "http://echarts.baidu.com",
+    "devDependencies": {
+        "browser-sync": "^2.17.1",
+        "echarts-optimizer": "^0.2.18"
+    }
 }

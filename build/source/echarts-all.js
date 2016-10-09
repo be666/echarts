@@ -9162,6 +9162,8 @@ define('zrender/zrender', [
                 if (this._clickThreshold < 5) {
                     this._dispatchAgency(_lastHover, EVENT.CLICK, event);
                 }
+            } else if (this._clickThreshold < 5) {
+                this._dispatchAgency(null, EVENT.CLICK, event);
             }
             this._mousemoveHandler(event);
         },
@@ -9534,7 +9536,29 @@ define('zrender/zrender', [
             target: targetShape,
             cancelBubble: false
         };
+        if (!targetShape) {
+            var list = this.storage.getShapeList();
+            for (var _i = 0; _i < list.length; _i++) {
+                util.each(list, function (n, i) {
+                    if (n.isCoverTextRect(this._mouseX, this._mouseY)) {
+                        event.realTarget = 'label';
+                        var eventPacket = {
+                            type: eventName,
+                            event: event,
+                            target: n,
+                            cancelBubble: false
+                        };
+                        n[eventHandler] && el[eventHandler](eventPacket);
+                        n.dispatch(eventName, eventPacket);
+                        this.dispatch(eventName, eventPacket);
+                    }
+                }, this);
+            }
+        }
         var el = targetShape;
+        if (eventName != 'click') {
+            return;
+        }
         if (draggedShape) {
             eventPacket.dragged = draggedShape;
         }
@@ -12246,6 +12270,9 @@ define('zrender/zrender', [
         }
         return x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
     };
+    Base.prototype.isCoverTextRect = function (x, y) {
+        return x >= this.style.text_x && x <= this.style.text_x + this.style.text_w && y >= this.style.text_y && y <= this.style.text_y + this.style.text_h;
+    };
     Base.prototype.drawText = function (ctx, style, normalStyle) {
         if (typeof style.text == 'undefined' || style.text === false) {
             return;
@@ -12371,6 +12398,11 @@ define('zrender/zrender', [
             bl = 'middle';
             break;
         }
+        var textRect = _getTextRect(style.text, tx, ty, style.textFont, style.textAlign || al, style.textBaseline || bl);
+        style.text_x = tx;
+        style.text_y = ty - textRect.height / 2;
+        style.text_w = textRect.width;
+        style.text_h = textRect.height;
         if (tx != null && ty != null) {
             _fillText(ctx, style.text, tx, ty, style.textFont, style.textAlign || al, style.textBaseline || bl);
         }
