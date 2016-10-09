@@ -79,7 +79,7 @@ exports.amd = {
         },
         {
             name: 'zrender',
-            location: '../../zrender/src',
+            location: '../zrender/src',
             main: 'zrender'
         }
     ]

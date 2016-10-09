@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+    <script src="http://s1.bdstatic.com/r/www/cache/ecom/esl/1-8-8/esl.js"></script>
+</head>
+<body>
+
+<div id="main" style="height: 100vh"></div>
+
+<script type="text/javascript">
+    // 路径配置
+    require.config({
+        packages: [{
+            name: 'echarts',
+            location: '../src',
+            main: 'echarts'
+        }, {
+            name: 'zrender',
+            location: '../zrender/src',
+            main: 'zrender'
+        }]
+    });
+
+    var ajaxData={};
+    var ajaxDataR={};
+
+    $.getJSON('../json/26366217.json', function (res) {
+        window.ajaxData=ajaxData=res;
+        $.getJSON('../json/26366217-r.json', function (res2) {
+            window.ajaxDataR=ajaxDataR=res;
+            init()
+        });
+    });
+
+
+    var myChart;
+    var Zrender;
+
+    function init() {
+        // 使用
+        require([
+                'echarts',
+                'echarts/chart/tree', // 使用柱状图就加载bar模块，按需加载
+                'echarts/config',
+                'zrender/Layer',
+                'zrender/Painter',
+                'zrender/tool/area',
+            ],
+            function (echarts, tree, config, Layer, Painter, Area) {
+
+                var option = {
+                    title: {
+                        text: ''
+                    },
+                    toolbox: {
+                        x: 'left',
+                        show: false,
+                        feature: {
+                            saveAsImage: {
+                                show: true,
+                                title: '保存为图片',
+                                type: 'jpeg',
+                                lang: ['点击本地保存']
+                            }
+                        }
+                    },
+                    series: []
+                };
+
+
+
+
+                var series = [
+                    {
+                        name: '树图',
+                        type: 'tree',
+                        orient: 'vertical',  // vertical horizontal
+                        rootLocation: {x: 'center', y: 'center'}, // 根节点位置  {x: 100, y: 'center'}
+                        nodePadding: 80,
+                        layerPadding: 130,
+                        hoverable: false,
+                        roam: true,
+                        //箭头
+                        itemStyle: {
+                            normal: {
+                                color: '#7283bb',
+                                borderWidth: 3,
+                                borderColor: '#dbe0f9',
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: "{b}",
+                                    textStyle: {
+                                        color: '#000',
+                                        fontSize: 15
+                                    }
+                                },
+                                lineStyle: {
+                                    color: '#ccc',
+                                    type: 'curve' // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+
+                                },
+                            },
+                            emphasis: {
+                                color: '#3196ca',
+                                label: {
+                                    show: false
+                                },
+                                borderWidth: 3,
+                                borderColor: '#dbeaf4'
+                            }
+                        },
+                        data: ajaxData
+                    },
+                    {
+                        name: '树图',
+                        type: 'tree',
+                        orient: 'vertical',  // vertical horizontal
+                        direction: 'inverse',
+                        rootLocation: {x: 'center', y: 'center'}, // 根节点位置  {x: 100, y: 'center'}
+                        nodePadding: 80,
+                        layerPadding: 130,
+                        hoverable: false,
+                        roam: true,
+                        //箭头
+                        itemStyle: {
+                            normal: {
+                                color: '#7283bb',
+                                borderWidth: 3,
+                                borderColor: '#dbe0f9',
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: "{b}",
+                                    textStyle: {
+                                        color: '#000',
+                                        fontSize: 15
+                                    }
+                                },
+                                lineStyle: {
+                                    color: '#ccc',
+                                    type: 'curve' // 'curve'|'broken'|'solid'|'dotted'|'dashed'
+
+                                },
+                            },
+                            emphasis: {
+                                color: '#3196ca',
+                                label: {
+                                    show: false
+                                },
+                                borderWidth: 3,
+                                borderColor: '#dbeaf4'
+                            }
+                        },
+                        data: ajaxDataR
+                    }];
+
+
+                var myChart = echarts.init(document.querySelector('#main'));
+
+                myChart.setOption(option);
+
+                myChart.setSeries(series, {notMerger: true});
+            }
+        );
+    }
+
+</script>
+
+</body>
+</html>
