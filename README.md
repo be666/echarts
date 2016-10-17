@@ -17,3 +17,9 @@ npm run build
     "build": "cd build ;echarts-optimize -c ./echarts-optimize-conf.js -o ./"
 }
 ```
+
+
+# builder-web
+
+[https://github.com/ecomfe/echarts-builder-web](https://github.com/ecomfe/echarts-builder-web)
+
